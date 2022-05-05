@@ -9,11 +9,13 @@ export default class WebBuilder {
     }
 
     async build(dataObj) {
+        const settings = await this.fileSystem.readFile(this.fileSystem.path + '\\.settings', 'json')
+
         this.path = path.resolve(this.fileSystem.path + '\\out')
         await new Promise(resolve => fs.mkdir(this.path, (err) => resolve()))
         this.path += '\\web'
         await new Promise(resolve => fs.mkdir(this.path, (err) => resolve()))
-        await new Promise(resolve => fs.writeFile(this.path + '\\' + 'Importer.js', ImporterTemplate(this.#buildImports(dataObj)), () => resolve()))
+        await new Promise(resolve => fs.writeFile(this.path + '\\' + 'Importer.js', ImporterTemplate(this.#buildImports(dataObj), settings), () => resolve()))
 
         await this.#insertData(dataObj.entities)
     }
@@ -24,7 +26,7 @@ export default class WebBuilder {
             imports.push(`
                toLoad.push(new Promise(resolve => {
                 import("./assets/${key}.${contentType}").then(r => {
-                    resolve({data: r, type: DATA_TYPES.${type}))
+                    resolve({data: r, id: "${key}", type: DATA_TYPES.${type}))
                })
              `)
         }
@@ -57,7 +59,7 @@ export default class WebBuilder {
                         break
                     case 'flow':
                     case 'flowRaw':
-                        promises.push(new Promise(resolve => fs.writeFile(path.resolve(this.path + '\\' + r.id + '.js'), 'export default '+ data, () => resolve())))
+                        promises.push(new Promise(resolve => fs.writeFile(path.resolve(this.path + '\\' + r.id + '.js'), 'export default ' + data, () => resolve())))
                         break
                     case 'pimg':
                         promises.push(new Promise(resolve => fs.writeFile(path.resolve(this.path + '\\' + r.id + '.json'), JSON.stringify({data}), () => resolve())))
