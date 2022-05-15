@@ -1,4 +1,5 @@
 import ImporterTemplate from "./ImporterTemplate";
+import FILE_TYPES from "../../../../public/glTF/FILE_TYPES";
 
 const fs = window.require('fs')
 const path = window.require('path')
@@ -53,15 +54,15 @@ export default class WebBuilder {
             const data = await this.fileSystem.readFile(this.fileSystem.path + '\\assets\\' + r.path)
             if (data)
                 switch (r.path.split('.').pop()) {
-                    case '.mesh':
-                    case 'material':
+                    case FILE_TYPES.MESH:
+                    case FILE_TYPES.MATERIAL:
                         promises.push(new Promise(resolve => fs.writeFile(path.resolve(this.path + '\\' + r.id + '.json'), data, () => resolve())))
                         break
-                    case 'flow':
-                    case 'flowRaw':
+                    case FILE_TYPES.SCRIPT:
+                    case FILE_TYPES.RAW_SCRIPT:
                         promises.push(new Promise(resolve => fs.writeFile(path.resolve(this.path + '\\' + r.id + '.js'), 'export default ' + data, () => resolve())))
                         break
-                    case 'pimg':
+                    case FILE_TYPES.IMAGE:
                         promises.push(new Promise(resolve => fs.writeFile(path.resolve(this.path + '\\' + r.id + '.json'), JSON.stringify({data}), () => resolve())))
                         break
                     default:
