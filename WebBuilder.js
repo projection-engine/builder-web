@@ -1,5 +1,5 @@
 import ImporterTemplate from "./ImporterTemplate";
-import FILE_TYPES from "../../../../public/glTF/FILE_TYPES";
+import FILE_TYPES from "../../../../public/project/glTF/FILE_TYPES";
 
 const fs = window.require('fs')
 const path = window.require('path')
